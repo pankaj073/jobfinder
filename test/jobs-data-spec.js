@@ -1,6 +1,6 @@
 var expect = require('chai').expect;
 var mongoose = require('mongoose');
-var jobsModel = require('../models/job.js')
+var jobModel = require('../models/job.js')
 var Promise = require('bluebird');
 // turn it into a promise so we dont need call back
 function resetJobs() {
@@ -8,16 +8,18 @@ function resetJobs() {
         mongoose.connection.collections['jobs'].drop(resolve, reject);
     })
 }
+
+var connectDB = Promise.promisify(mongoose.connect, {context: mongoose});
+
 describe("get jobs", function() {
     it("should never be empty since jobs are seeded", function(done) {
-        mongoose.connect('mongodb://localhost/jobfinder', function() {
-            resetJobs()
-            .then(jobsModel.seedJobs)
-            .then(function() {
-                mongoose.model('Job').find({}).exec(function(error, jobsList) {
-                    expect(jobsList.length).to.be.at.least(1);
-                    done();
-                });
+        connectDB('mongodb://localhost/jobfinder')
+        .then(resetJobs)
+        .then(jobModel.seedJobs)
+        .then(function() {
+            mongoose.model('Job').find({}).exec(function(error, jobsList) {
+                expect(jobsList.length).to.be.at.least(1);
+                done();
             });
         });
     });

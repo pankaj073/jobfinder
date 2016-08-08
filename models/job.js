@@ -7,13 +7,14 @@ var jobSchema = mongoose.Schema({
 
 var Job = mongoose.model('Job', jobSchema);
 
-exports.seedJobs = function() {
+// need a callback for calling seedjobs
+exports.seedJobs = function(callback) {
     Job.find({}).exec(function(error, collection) {
         if(collection.length === 0) {
             Job.create({title:'Cook',description:'You will be making bagels'});
             Job.create({title:'Waiter',description:'You will be putting food on peoples table'});
             Job.create({title:'Programmer',description:'You will be mindlessly typing for hours'});
-            Job.create({title:'Axe Maker',description:'We need many axes made.. so many..'});
+            Job.create({title:'Axe Maker',description:'We need many axes made.. so many..'}, callback);
         }
     })
 }

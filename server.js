@@ -8,11 +8,7 @@ app.set('view engine', 'pug');
 
 app.use(express.static(__dirname + '/public'))
 
-app.get('/api/jobs', function(req, res) {
-    jobsData.findJobs().then(function(error, collection) {
-        res.send(collection);
-    })
-});
+require("./jobs-service.js")(jobsData, app);
 
 app.get('*', function(req, res) {
     res.render('index');
